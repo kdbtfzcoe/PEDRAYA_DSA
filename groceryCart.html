@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Grocery Cart</title>
+        <link rel="stylesheet" href="./style.css">
+    
+    </head>
+
+    <body>
+
+        <h1>Grocery Cart List</h1>
+        <input type="text" id="item-input" placeholder="Enter item">
+        <input type="number" id="quantity-input" placeholder="Enter quantity">
+        <button onclick="addItem()">Add Item</button>
+        <button onclick="clearAll()">Clear All</button>
+        
+        <ul id="cart-list"></ul>
+
+        <!-- start ng javascript-->
+
+        <script>
+
+            // constructor function which created the object = cartItem
+
+            function cartItem(name, quantity){
+                this.name = name; //set the name as a propert of object cartItem
+                this.quantity = quantity; //set the quality as a property of object carItem
+            }
+
+            // object that manages the cart that contains all the methods of the cart
+            // the reason that the cart can operate add, delete, edit, display
+
+            const cartManager = {
+
+                items: [], // <-- this is an array to store the items added to the cart
+
+                /*addItem method is responsible for adding the item in the cartManager object
+                which was given by the function addItem after getting the user input
+                */
+
+                addItem(name, quantity){
+                    const newItem = new cartItem(name, quantity); // creates new cartItem according to the input of the user with the correct parameters
+                    this.items.push(newItem) // adds the new item
+                    this.displayItems(); 
+                },
+
+                /*delete item method is responsible for removing the item from the cart which depends on provided information (index) of the deleteItem function */
+
+                deleteItem(index){
+                    this.items.splice(index,1); //removes the item at the specified index from the cart, index is the position to be removed and 1 is the number of element to be removed
+                    this.displayItems();
+                },
+
+                editItem(index, name, quantity){
+                    this.items[index].name = name;
+                    this.items[index].quantity = quantity;
+                    this.displayItems();
+                },
+
+                displayItems(){
+                    const cartList = document.getElementById('cart-list');
+                    cartList.innerHTML ='';
+
+                    // displays the total number of items in the cart
+
+                    const totalItemsElement = document.getElementById('total-items'); // <-- getting the html element with the id called total items
+
+
+                    totalItemsElement.textContent = `Total Items: ${this.items.length}` // <-- uupdates the text content of the displayed element which was gotten from the items[] array's length property
+
+                    this.items.forEach((item, index) => {
+                        const listItem = document.createElement('li');
+
+                        const editItem = document.createElement('div');
+                        editItem.style.display = 'none';
+
+                        const editNameInput = document.createElement('input');
+                        editNameInput.type ='text';
+                        editNameInput.value = item.name;
+
+                        const editQuantityInput = document.createElement('input');
+                        editQuantityInput.type ='number';
+                        editQuantityInput.value = item.quantity;
+
+                        const saveButton = document.createElement('button');
+                        saveButton.textContent ='Save';
+                        saveButton.onclick =() => {
+                            cartManager.editItem(index, editNameInput.value, editQuantityInput.value);
+                            editItem.style.display = 'none';
+
+                            listItem.querySelector('span').style.display = 'block';
+                        };
+
+                        const cancelButton = document.createElement('button');
+                        cancelButton.textContent = 'Cancel';
+                        cancelButton.onclick =() => {
+                            editItem.style.display = 'none';
+                            listItem.querySelector('span').style.display = 'block';
+
+                        };
+
+                        editItem.appendChild(editNameInput);
+                        editItem.appendChild(editQuantityInput);
+                        editItem.appendChild(saveButton);
+                        editItem.appendChild(cancelButton);
+
+                        //when edit button is clicked, the function inside is triggered which hides one element and displays another 
+
+                        const editButton = document.createElement('button');
+                        editButton.textContent = 'Edit';
+                        editButton.onclick = () => {
+                            listItem.querySelector('span').style.display = 'none';
+                            editItem.style.display = 'block';
+                        };
+
+                        // when this button is triggered, it deletes an item (specified index) from the cart which is done by the calling the function (cartManager.deleteItem)
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.onclick = () => {
+                            cartManager.deleteItem(index);
+                        };
+
+                        const itemText = document.createElement('span');
+                        itemText.textContent = `${item.name} x ${item.quantity}`;
+
+                        listItem.appendChild(itemText);
+                        listItem.appendChild(editItem);
+                        listItem.appendChild(editButton);
+                        listItem.appendChild(deleteButton);
+
+                        cartList.appendChild(listItem);
+
+                    });
+
+                }
+            }
+            
+            // function that gets the items' name and quantity from the user input elements which then adds the new item to the cart
+
+            function addItem(){
+                const itemInput = document.getElementById('item-input').value; 
+                const itemQuantity = document.getElementById('quantity-input').value;
+
+                // this if else statement checks if the items' name and quality are valid
+
+                if(itemInput.trim() && itemQuantity.trim()){
+
+                    cartManager.addItem(itemInput, itemQuantity); //calling the method addItem to add the item to the cart
+
+                    //this clears the input elements to prepare the input element for the next added item so that the user will not manually delete or clear the previous items
+
+                    document.getElementById('item-input').value ='';
+                    document.getElementById('quantity-input').value = '';
+                } 
+                else 
+                {
+                    alert("Please enter a valid item name and quantity.");
+                }
+            }
+
+            //deletes the item from the cart
+
+            function deleteItem(index){
+                cartManager.deleteItem(index); // calls the delete item method to remove a specific item from the cart based on the index
+
+            }
+
+            // this clears all items from the cart
+
+            function clearAll(){
+
+                cartManager.items =[]; // clearing the cart
+                cartManager.displayItems(); // displays the updated/cleared cart
+            }
+            
+        </script>
+
+        <p id="total-items">Total Items: 0</p> <!--displays the updated total items count in the webpage-->
+
+    </body>
+
+</html>

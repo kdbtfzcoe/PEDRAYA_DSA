@@ -1,0 +1,38 @@
+h1{
+    color:white;
+    background: green;
+    font-size:45px;
+    text-align: center;
+}
+
+button{
+    color: green;
+    background: white;
+    font-size:15px;
+    margin-right: 1px;
+    margin-left: 1px;
+}
+
+input{
+    color:black;
+    background:white;
+    font-size:15px;
+}
+
+ul{
+
+    font-size:20px;
+    margin-right: 1px;
+    margin-left: 1px;
+}
+
+p{
+    font-size:17px;
+    font-style: italic;
+}
+
+#cart-list li span{
+
+    margin-right: 5px;
+}
+
